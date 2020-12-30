@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using HomeChefBackend.Models;
 using MySql.Data.MySqlClient;
 
 namespace HomeChefBackend
@@ -14,6 +15,19 @@ namespace HomeChefBackend
         {
 
         }
+
+        public Result Login(string email, String password)
+        {
+            var connection = new MySqlConnection(cs);
+            var loginSql = "SELECT id FROM admin WHERE username = '$myusername' and passcode = '$mypassword'";
+            if (connection.State != System.Data.ConnectionState.Open)
+            {
+                connection.Open();
+            }
+            var cmd = new MySqlCommand(loginSql, connection);
+            return new Result();
+        }
+
         public static List<string> GetUsers()
         {
             var connection = new MySqlConnection(cs);

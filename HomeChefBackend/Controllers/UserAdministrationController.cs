@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using HomeChefBackend.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -12,22 +13,20 @@ namespace HomeChefBackend.Controllers
     public class UserAdministrationController : ControllerBase
     {
         private readonly ILogger<UserAdministrationController> _logger;
-        public enum Result
-        {
-            Success,
-            NoAccount,
-            IncorrectDetails,
-            InternalErr
-        }
-        public UserAdministrationController(ILogger<UserAdministrationController> logger)
+        private readonly UserManagement _userManagement;
+        
+        public UserAdministrationController(ILogger<UserAdministrationController> logger, 
+            UserManagement userManagement)
         {
             _logger = logger;
+            _userManagement = userManagement;
         }
 
         [HttpGet]
-        public Result Get()
+        public Result Get(string email, string password)
         {
-            return Result.Success;// UserManagement.GetUsers();
+            var result = _userManagement.Login(email, password);
+            return result;// UserManagement.GetUsers();
         }
     }
 }
