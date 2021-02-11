@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+
 namespace HomeChefBackend.Models
 {
     public class Result
@@ -11,8 +12,8 @@ namespace HomeChefBackend.Models
         {
             success, failure, noaccount
         }
-        private Guid Id { get; }
-        private String Email { get; }
-        private String Password { get; }
+        public LoginResult result { get; set; }
+
+        public User? user { get; set; }
     }
 }

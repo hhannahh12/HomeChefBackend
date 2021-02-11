@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Data.SqlClient;
 using HomeChefBackend.Models;
 using MySql.Data.MySqlClient;
 
@@ -9,43 +7,69 @@ namespace HomeChefBackend
 {
     public class UserManagement
     {
-        private static string cs = @"server=localhost;userid=sghruddy;password=Thisissostupid123!;database=homechef_administration";
-
-        public UserManagement()
-        {
-
-        }
+        private static string cs = "server=localhost;port=3306;user=sghruddy;password=Thisissostupid123!;database=homechef_administration;";
 
         public Result Login(string email, String password)
         {
-            var connection = new MySqlConnection(cs);
-            var loginSql = "SELECT id FROM admin WHERE username = '$myusername' and passcode = '$mypassword'";
-            if (connection.State != System.Data.ConnectionState.Open)
+            using (var connection = new MySqlConnection(cs))
             {
-                connection.Open();
-            }
-            var cmd = new MySqlCommand(loginSql, connection);
-            return new Result();
-        }
-
-        public static List<string> GetUsers()
-        {
-            var connection = new MySqlConnection(cs);
-            var MySql = "select * from users";
-            if(connection.State != System.Data.ConnectionState.Open)
-            {
-                connection.Open();
-            }
-            var cmd = new MySqlCommand(MySql, connection);
-            using MySqlDataReader rdr = cmd.ExecuteReader();
-            {
-                var UserIds = new List<string>();
-                while (rdr.Read())
+                try
                 {
-                    UserIds.Add(rdr.GetString(0));
+                    connection.Open();
+                    Console.WriteLine("Opening Login Connection To Database");
+                    var mySql = "SELECT * FROM homechef_administration.users WHERE email = '" + email + "'  and password = '" + password + "'";
+                    var cmd = new MySqlCommand(mySql, connection);
+                    using (MySqlDataReader rdr = cmd.ExecuteReader())
+                    {
+                        // if(rdr.ha)
+                        var c = "hello";
+
+
+                        if (rdr.HasRows)
+                        {
+                            try
+                            {
+                                rdr.Read();
+                                var a = rdr.GetFieldValue<string>(1);
+                                return new Result()
+                                {
+                                    //TODO:Might just return id.. not sure on use of email yet.
+                                    result = Result.LoginResult.success,
+                                    user = new User(rdr.GetFieldValue<string>(0), rdr.GetFieldValue<string>(1))
+                                };
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine(ex.ToString());
+                                return new Result()
+                                {
+                                    result = Result.LoginResult.failure
+                                };
+                            }
+                        }
+                        else
+                        {
+                            return new Result()
+                            {
+                                result = Result.LoginResult.failure
+                            };
+
+                        }
+                    }
+                    
                 }
-                return UserIds;
+
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                    return new Result()
+                    {
+                        result = Result.LoginResult.failure
+                    };
+                }
             }
+            
+            
         }
     }
 }

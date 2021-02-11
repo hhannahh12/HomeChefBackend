@@ -15,17 +15,16 @@ namespace HomeChefBackend.Controllers
         private readonly ILogger<UserAdministrationController> _logger;
         private readonly UserManagement _userManagement;
         
-        public UserAdministrationController(ILogger<UserAdministrationController> logger, 
-            UserManagement userManagement)
+        public UserAdministrationController(ILogger<UserAdministrationController> logger)
         {
             _logger = logger;
-            _userManagement = userManagement;
         }
 
         [HttpGet]
         public Result Get(string email, string password)
         {
-            var result = _userManagement.Login(email, password);
+            var a = new UserManagement();
+            var result = a.Login(email, password);
             return result;// UserManagement.GetUsers();
         }
     }
