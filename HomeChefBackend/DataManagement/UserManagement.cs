@@ -8,7 +8,6 @@ namespace HomeChefBackend
     public class UserManagement
     {
         private static string cs = "server=localhost;port=3306;user=sghruddy;password=Thisissostupid123!;database=homechef_administration;";
-
         public string Login(string email, String password)
         {
             using (var connection = new MySqlConnection(cs))
@@ -54,7 +53,7 @@ namespace HomeChefBackend
             //TODO: ADD user to the user settings table too
             if (!doesAccountExist(email))
             {
-                string insertQuery = "insert into homechef_administration.users(userId,email,password) values('" + id + "','" + email + "','" + password + "');";
+                string insertQuery = "insert into homechef_administration.users(userid,email,password) values('" + id + "','"+ email + "','" + password + "');";
                 MySqlConnection connection = new MySqlConnection(cs);
                 MySqlCommand MySqlCommand = new MySqlCommand(insertQuery, connection);
                 MySqlDataReader rdr;

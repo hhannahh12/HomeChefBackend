@@ -4,7 +4,6 @@ using Microsoft.Extensions.Logging;
 
 namespace HomeChefBackend.Controllers
 {
-   // [AllowCrossSiteJson]
     [ApiController]
     [Route("[controller]")]
     public class CreateAccountController : ControllerBase
