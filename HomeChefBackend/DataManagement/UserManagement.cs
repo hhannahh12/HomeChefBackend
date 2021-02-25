@@ -9,7 +9,7 @@ namespace HomeChefBackend
     {
         private static string cs = "server=localhost;port=3306;user=sghruddy;password=Thisissostupid123!;database=homechef_administration;";
 
-        public Result Login(string email, String password)
+        public string Login(string email, String password)
         {
             using (var connection = new MySqlConnection(cs))
             {
@@ -21,55 +21,123 @@ namespace HomeChefBackend
                     var cmd = new MySqlCommand(mySql, connection);
                     using (MySqlDataReader rdr = cmd.ExecuteReader())
                     {
-                        // if(rdr.ha)
-                        var c = "hello";
-
-
                         if (rdr.HasRows)
                         {
                             try
                             {
                                 rdr.Read();
-                                var a = rdr.GetFieldValue<string>(1);
-                                return new Result()
-                                {
-                                    //TODO:Might just return id.. not sure on use of email yet.
-                                    result = Result.LoginResult.success,
-                                    user = new User(rdr.GetFieldValue<string>(0), rdr.GetFieldValue<string>(1))
-                                };
+                                var value =  rdr.GetFieldValue<string>(0);
+                                return value;
                             }
                             catch (Exception ex)
                             {
-                                Console.WriteLine(ex.ToString());
-                                return new Result()
-                                {
-                                    result = Result.LoginResult.failure
-                                };
+                                return "Failed";
                             }
                         }
                         else
                         {
-                            return new Result()
-                            {
-                                result = Result.LoginResult.failure
-                            };
-
+                            return "Failed";
                         }
                     }
-                    
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                    return "Failed";
+                    //TODO: Get rid of all these try catches.
+                }
+            }
+        }
+
+        public bool CreateAccount(string id, string email, string password)
+        {
+            //TODO: ADD user to the user settings table too
+            if (!doesAccountExist(email))
+            {
+                string insertQuery = "insert into homechef_administration.users(userId,email,password) values('" + id + "','" + email + "','" + password + "');";
+                MySqlConnection connection = new MySqlConnection(cs);
+                MySqlCommand MySqlCommand = new MySqlCommand(insertQuery, connection);
+                MySqlDataReader rdr;
+                try
+                {
+                    connection.Open();
+                    rdr = MySqlCommand.ExecuteReader();
+
+                    while (rdr.Read())
+                    {
+                    }
+
+                    connection.Close();
+                    //TODO: ADD THE USER TO PREFERENCES.
+                    return true;
                 }
 
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.ToString());
-                    return new Result()
-                    {
-                        result = Result.LoginResult.failure
-                    };
+                    Console.WriteLine(ex);
+                    return false;
                 }
             }
+            else
+            {
+                return false;
+            }
             
-            
+        }
+
+        public bool deleteAccount(string userId)
+        {
+            try
+            {
+                string query = "delete from homechef_administration.users where UserId='" + userId + "';";
+                MySqlConnection connection = new MySqlConnection(cs);
+                MySqlCommand cmd = new MySqlCommand(query, connection);
+                MySqlDataReader rdr;
+                connection.Open();
+                rdr = cmd.ExecuteReader();
+                while (rdr.Read())
+                {
+                }
+                connection.Close();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return false;
+            }
+        }
+
+        private bool doesAccountExist(string email)
+        {
+            try
+            {
+                string checkExistsQuery = "SELECT * FROM homechef_administration.users WHERE email = '" + email;
+
+                MySqlConnection connection = new MySqlConnection(cs);
+                MySqlCommand MySqlCommand = new MySqlCommand(checkExistsQuery, connection);
+                MySqlDataReader rdr;
+                connection.Open();
+                rdr = MySqlCommand.ExecuteReader();
+
+                while (rdr.Read())
+                {
+                    if (rdr.HasRows)
+                    {
+                        //if already exists
+                        return false;
+                    }
+                }
+                connection.Close();
+                return false;
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine("Delete account failed:" + ex);
+                return false;
+            }
+
+
         }
     }
 }
