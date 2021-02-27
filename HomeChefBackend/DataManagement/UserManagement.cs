@@ -84,7 +84,7 @@ namespace HomeChefBackend
             
         }
 
-        public bool deleteAccount(string userId)
+        public bool DeleteAccount(string userId)
         {
             try
             {
