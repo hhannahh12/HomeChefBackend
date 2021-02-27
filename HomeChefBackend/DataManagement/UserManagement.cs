@@ -88,7 +88,7 @@ namespace HomeChefBackend
         {
             try
             {
-                string query = "delete from homechef_administration.users where UserId='" + userId + "';";
+                string query = "delete from homechef_administration.users where userid='" + userId + "';";
                 MySqlConnection connection = new MySqlConnection(cs);
                 MySqlCommand cmd = new MySqlCommand(query, connection);
                 MySqlDataReader rdr;
