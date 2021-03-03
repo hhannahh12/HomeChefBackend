@@ -18,6 +18,7 @@ namespace HomeChefBackend.Controllers
         [HttpDelete]
         public bool Delete(string id)
         {
+            //TODO: DELETE USER FROM OTHER TABLE
             var result = _userManagement.DeleteAccount(id);
             return result;
         }

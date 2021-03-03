@@ -67,7 +67,6 @@ namespace HomeChefBackend
                     }
 
                     connection.Close();
-                    //TODO: ADD THE USER TO PREFERENCES.
                     return true;
                 }
 
@@ -109,9 +108,8 @@ namespace HomeChefBackend
 
         private bool doesAccountExist(string email)
         {
-            try
-            {
-                string checkExistsQuery = "SELECT * FROM homechef_administration.users WHERE email = '" + email;
+            try{
+                string checkExistsQuery = "SELECT * FROM homechef_administration.users WHERE email = '" + email+"'";
 
                 MySqlConnection connection = new MySqlConnection(cs);
                 MySqlCommand MySqlCommand = new MySqlCommand(checkExistsQuery, connection);
@@ -124,7 +122,7 @@ namespace HomeChefBackend
                     if (rdr.HasRows)
                     {
                         //if already exists
-                        return false;
+                        return true;
                     }
                 }
                 connection.Close();
@@ -135,8 +133,34 @@ namespace HomeChefBackend
                 Console.WriteLine("Delete account failed:" + ex);
                 return false;
             }
+        }
 
+        public bool AddUserToPreferencesDB(string userid)
+        {
+            var preferencesid = Guid.NewGuid().ToString();
+            //todo: make dietryrequirements lower case.
+            string insertQuery = "insert into homechef_administration.preferences(preferencesid,userid) values('" + preferencesid + "','" + userid + "');";
+            MySqlConnection connection = new MySqlConnection(cs);
+            MySqlCommand MySqlCommand = new MySqlCommand(insertQuery, connection);
+            MySqlDataReader rdr;
+            try
+            {
+                connection.Open();
+                rdr = MySqlCommand.ExecuteReader();
 
+                while (rdr.Read())
+                {
+                }
+
+                connection.Close();
+                return true;
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return false;
+            }
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using HomeChefBackend.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -17,10 +18,11 @@ namespace HomeChefBackend.Controllers
         }
 
         [HttpPost]
-        public bool Post(string email, string password)
+        public bool Post([FromBody] CreateAccountModel model)
         {
             var id = Guid.NewGuid();
-            var result = _userManagement.CreateAccount(id.ToString(), email, password);
+            var result = _userManagement.CreateAccount(id.ToString(), model.Email, model.Password);
+            if (result) { _userManagement.AddUserToPreferencesDB(id.ToString()); }
             return result;
         }
     }
