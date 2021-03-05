@@ -2,6 +2,7 @@
 using HomeChefBackend.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace HomeChefBackend.Controllers
 {
@@ -18,10 +19,10 @@ namespace HomeChefBackend.Controllers
         }
         //TODO:Check all loggers types
         [HttpGet]
-        public bool Get(string userId)
+        public string Get(string userId)
         {
             var result = _preferenceManagement.GetUserPreferences(userId);
-            return result;
+            return JsonConvert.SerializeObject(result);
         }
     }
 }
