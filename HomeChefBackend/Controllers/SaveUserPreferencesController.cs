@@ -20,12 +20,12 @@ namespace HomeChefBackend.Controllers
             _logger = logger;
         }
 
-        [HttpGet]
-        public bool Post(string userid,string dietryrequirements,string intollerances, string measurementunits,string portion)
+        [HttpPost]
+        public bool Post([FromBody] UserPreferencesModel model)
         {
             //todo: put all these in to an object instead.
             //todo: should be adding this by preferences id
-            return _preferenceManagement.SavePreferences(userid,dietryrequirements,intollerances,measurementunits,portion);
+            return _preferenceManagement.SavePreferences(model);
 
         }
     }

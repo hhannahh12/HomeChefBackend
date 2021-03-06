@@ -12,14 +12,12 @@ namespace HomeChefBackend
     {
         private static string cs = "server=localhost;port=3306;user=sghruddy;password=Thisissostupid123!;database=homechef_administration;";
 
-        public bool SavePreferences(string userid, string dietryrequirements, string intollerances, string measurementunits, string portion)
+        public bool SavePreferences(UserPreferencesModel model)
         {
-            var portionAsInt = Int16.Parse(portion);
             //todo: make dietryrequirements lower case.
-        
             string insertQuery = "UPDATE homechef_administration.preferences SET dietryrequirements="
-                    +dietryrequirements+"', intollerances='"+intollerances+"',measuringunit='"+measurementunits+"',portion='"+portionAsInt+
-                    "WHERE userid ="+userid+"' );";
+                    +model.DietryRequirements+"', intollerances='"+model.Intollerances+"',measuringunit='"+model.MeasuringUnit+"',portion='"+model.Portion+
+                    "WHERE userid ="+model.UserId+"' );";
             MySqlConnection connection = new MySqlConnection(cs);
             MySqlCommand MySqlCommand = new MySqlCommand(insertQuery, connection);
             MySqlDataReader rdr;
@@ -79,8 +77,8 @@ namespace HomeChefBackend
                                 rdr.GetFieldValue<string>(0),
                                 rdr.GetFieldValue<string>(1),
                                 rdr.GetFieldValue<int>(2),
-                                dietryRequirements.Split(","),
-                                intollerances.Split(","),
+                                dietryRequirements,
+                                intollerances,
                                 measurement);
                             return userPreferences;
                             

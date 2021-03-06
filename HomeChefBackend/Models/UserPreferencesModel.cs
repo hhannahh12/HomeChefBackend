@@ -11,17 +11,16 @@ namespace HomeChefBackend.Models
         public string UserId { get; set; }
         public string PreferencesId { get; set; }
         public int Portion { get; set; }
-        public string[] DietryRequirements { get; set; }
-
-        public string[] Intollerances { get; set; }
+        public string DietryRequirements { get; set; }
+        public string Intollerances { get; set; }
         public bool MeasuringUnit { get; set; }
 
         public UserPreferencesModel(
             string userid,
             string preferencesId,
             int portion,
-            string[] dietryRequirements,
-            string[] intollerances,
+            string dietryRequirements,
+            string intollerances,
             bool measuringUnit)
         {
             UserId = userid;
