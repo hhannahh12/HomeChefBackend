@@ -19,9 +19,9 @@ namespace HomeChefBackend.Controllers
         }
         //TODO:Check all loggers types
         [HttpGet]
-        public string Get(string userId)
+        public string Get(string preferencesid)
         {
-            var result = _preferenceManagement.GetUserPreferences(userId);
+            var result = _preferenceManagement.GetUserPreferences(preferencesid);
             return JsonConvert.SerializeObject(result);
         }
     }
