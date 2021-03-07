@@ -162,5 +162,33 @@ namespace HomeChefBackend
                 return false;
             }
         }
+
+        public bool AddUserToPantryDB(string userid)
+        {
+            var pantryid = Guid.NewGuid().ToString();
+            //todo: make dietryrequirements lower case.
+            string insertQuery = "insert into homechef_administration.pantry(pantryid,userid) values('" + pantryid + "','" + userid + "');";
+            MySqlConnection connection = new MySqlConnection(cs);
+            MySqlCommand MySqlCommand = new MySqlCommand(insertQuery, connection);
+            MySqlDataReader rdr;
+            try
+            {
+                connection.Open();
+                rdr = MySqlCommand.ExecuteReader();
+
+                while (rdr.Read())
+                {
+                }
+
+                connection.Close();
+                return true;
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return false;
+            }
+        }
     }
 }

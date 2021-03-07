@@ -22,7 +22,10 @@ namespace HomeChefBackend.Controllers
         {
             var id = Guid.NewGuid();
             var result = _userManagement.CreateAccount(id.ToString(), model.Email, model.Password);
-            if (result) { _userManagement.AddUserToPreferencesDB(id.ToString()); }
+            if (result) {
+                _userManagement.AddUserToPreferencesDB(id.ToString());
+                _userManagement.AddUserToPantryDB(id.ToString());
+            }
             return result;
         }
     }
