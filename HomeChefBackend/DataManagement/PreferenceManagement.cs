@@ -128,5 +128,28 @@ namespace HomeChefBackend
                 }
             }
         }
+        public bool DeletePreferences(string preferencesid)
+        {
+            try
+            {
+                string query = "delete from homechef_administration.preferences where preferencesid='" + preferencesid + "';";
+                MySqlConnection connection = new MySqlConnection(cs);
+                MySqlCommand cmd = new MySqlCommand(query, connection);
+                MySqlDataReader rdr;
+                connection.Open();
+                rdr = cmd.ExecuteReader();
+                while (rdr.Read())
+                {
+                }
+                connection.Close();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return false;
+            }
+
+        }
     }
 }
