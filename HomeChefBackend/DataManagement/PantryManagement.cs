@@ -51,12 +51,13 @@ namespace HomeChefBackend
         }
         public bool AddIngredients(string id, string ingredients)
         {
-            //need to get first then append ingredients with ingredients... somehow check if already exists.
+            //TODO: THIS IS SAVING "" TO THE LIST ASWELL GET RID OF THEM
             var existingIngredients = GetIngredients(id).Split(",");
             var newIngredients = ingredients.Split(",");
-            var updatedIngredients = existingIngredients.Concat(newIngredients).ToArray().Distinct();
-            string insertQuery = "UPDATE homechef_administration.pantry SET ingredients= '"
-                    + updatedIngredients + "' WHERE pantryid ='" + id + "';";
+            var ingredientsString = "";
+            existingIngredients.Concat(newIngredients).Distinct().ToList().ForEach(a => ingredientsString += "," + a);
+
+            string insertQuery = "UPDATE homechef_administration.pantry SET ingredients= '" + ingredientsString + "' WHERE pantryid ='" + id + "';";
             MySqlConnection connection = new MySqlConnection(cs);
             MySqlCommand MySqlCommand = new MySqlCommand(insertQuery, connection);
             MySqlDataReader rdr;
