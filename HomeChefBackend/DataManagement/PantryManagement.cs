@@ -52,7 +52,7 @@ namespace HomeChefBackend
         public bool AddIngredients(string id, string ingredients)
         {
             //TODO: THIS IS SAVING "" TO THE LIST ASWELL GET RID OF THEM
-            var existingIngredients = GetIngredients(id).Split(",");
+            var existingIngredients = GetPantry(id).Split(",");
             var newIngredients = ingredients.Split(",");
             var ingredientsString = "";
             existingIngredients.Concat(newIngredients).Distinct().ToList().ForEach(a => ingredientsString += "," + a);
@@ -81,7 +81,38 @@ namespace HomeChefBackend
             }
         }
 
-        public string GetIngredients(string pantryid)
+        public bool RemoveIngredients(string id, string ingredients)
+        {
+            var existingIngredients = GetPantry(id).Split(",");
+            var removeIngredients = ingredients.Split(",");
+            var ingredientsString = "";
+            ingredientsString = existingIngredients.Except(removeIngredients).ToArray().ToString() ;
+            
+            string insertQuery = "UPDATE homechef_administration.pantry SET ingredients= '" + ingredientsString + "' WHERE pantryid ='" + id + "';";
+            MySqlConnection connection = new MySqlConnection(cs);
+            MySqlCommand MySqlCommand = new MySqlCommand(insertQuery, connection);
+            MySqlDataReader rdr;
+            try
+            {
+                connection.Open();
+                rdr = MySqlCommand.ExecuteReader();
+
+                while (rdr.Read())
+                {
+                }
+
+                connection.Close();
+                return true;
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return false;
+            }
+        }
+
+        public string GetPantry(string pantryid)
         {
             using (var connection = new MySqlConnection(cs))
             {
