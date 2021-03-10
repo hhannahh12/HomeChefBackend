@@ -47,17 +47,17 @@ namespace HomeChefBackend
         public  bool SaveIngredients(string query)
         {
             return true;
+            //TODO: REDUNDANT METHOD
         
         }
-        public bool AddIngredients(string id, string ingredients)
+        public bool AddIngredients(string id, IngredientModel[] ingredients)
         {
-            //TODO: THIS IS SAVING "" TO THE LIST ASWELL GET RID OF THEM
-            var existingIngredients = GetPantry(id).Split(",");
-            var newIngredients = ingredients.Split(",");
-            var ingredientsString = "";
-            existingIngredients.Concat(newIngredients).Distinct().ToList().ForEach(a => ingredientsString += "," + a);
+            var existingIngredients = GetPantry(id);
+            var uniqueIngredients = new IngredientModel();
+            existingIngredients.Concat(ingredients).Distinct();
+            var uniqueIngredientsJson = JsonConvert.SerializeObject(uniqueIngredients).ToString();
 
-            string insertQuery = "UPDATE homechef_administration.pantry SET ingredients= '" + ingredientsString + "' WHERE pantryid ='" + id + "';";
+            string insertQuery = "UPDATE homechef_administration.pantry SET ingredients= '" + uniqueIngredientsJson + "' WHERE pantryid ='" + id + "';";
             MySqlConnection connection = new MySqlConnection(cs);
             MySqlCommand MySqlCommand = new MySqlCommand(insertQuery, connection);
             MySqlDataReader rdr;
@@ -112,7 +112,7 @@ namespace HomeChefBackend
             }
         }
 
-        public string GetPantry(string pantryid)
+        public IngredientModel[] GetPantry(string pantryid)
         {
             using (var connection = new MySqlConnection(cs))
             {
@@ -126,16 +126,10 @@ namespace HomeChefBackend
                     {
                         if (rdr.HasRows)
                         {
-                            try
-                            {
-                                rdr.Read();
-                                var value = rdr.GetFieldValue<string>(2);
-                                return value;
-                            }
-                            catch (Exception ex)
-                            {
-                                return "Failed";
-                            }
+                            rdr.Read();
+                            var value = rdr.GetFieldValue<string>(2);
+                            return JsonSerializer.Deserialize<IngredientModel[]>(value, );
+                            
                         }
                         else
                         {

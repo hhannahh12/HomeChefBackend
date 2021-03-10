@@ -9,6 +9,6 @@ namespace HomeChefBackend.Models
     public class IngredientsAddRemoveModel
     {
         public string PantryId { get; set; }
-        public string Ingredients { get; set; }
+        public IngredientModel[] Ingredients { get; set; }
     }
 }
