@@ -18,9 +18,8 @@ namespace HomeChefBackend.Controllers
         }
 
         [HttpGet]
-        public string Get(string pantryid)
+        public IngredientModel[] Get(string pantryid)
         {
-            var id = Guid.NewGuid();
             var result = _ingredientsManagement.GetPantry(pantryid);
             
             return result;

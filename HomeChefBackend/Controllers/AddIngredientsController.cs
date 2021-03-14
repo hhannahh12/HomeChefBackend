@@ -20,7 +20,6 @@ namespace HomeChefBackend.Controllers
         [HttpPost]
         public IngredientModel[] Post([FromBody] IngredientsAddRemoveModel model)
         {
-            var id = Guid.NewGuid();
             var result = _ingredientsManagement.AddIngredients(model.PantryId, model.Ingredients);
             return _ingredientsManagement.GetPantry(model.PantryId);
             //TODO; Implement some kind of error handling 

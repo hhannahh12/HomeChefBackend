@@ -18,11 +18,10 @@ namespace HomeChefBackend.Controllers
         }
 
         [HttpPost]
-        public bool Post([FromBody] IngredientsAddRemoveModel model)
+        public IngredientModel[] Post([FromBody] IngredientsAddRemoveModel model)
         {
             var result = _ingredientsManagement.RemoveIngredients(model.PantryId, model.Ingredients);
-            
-            return result;
+            return _ingredientsManagement.GetPantry(model.PantryId);
         }
     }
 }
