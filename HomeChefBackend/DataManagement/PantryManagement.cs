@@ -75,9 +75,10 @@ namespace HomeChefBackend
 
                 }
             }
-
-            string insertQuery = "UPDATE homechef_administration.pantry SET ingredients= '" + addIngredients + "' WHERE pantryid ='" + id + "';";
-            MySqlConnection connection = new MySqlConnection(cs);
+            //TODO:TEST THIS WORKS 
+            string insertQuery = "UPDATE homechef_administration.pantry SET ingredients= '" + addIngredients 
+                + "', lastclearoutdate= '"+DateTime.Now+"' WHERE pantryid ='" + id + "';";
+            MySqlConnection connection = new MySqlConnection(cs); 
             MySqlCommand MySqlCommand = new MySqlCommand(insertQuery, connection);
             MySqlDataReader rdr;
             try
@@ -85,7 +86,7 @@ namespace HomeChefBackend
                 connection.Open();
                 rdr = MySqlCommand.ExecuteReader();
 
-                while (rdr.Read())
+                while (rdr.Read()) ;
                 {
                 }
 
@@ -121,7 +122,9 @@ namespace HomeChefBackend
                     removeIngredients += JsonConvert.SerializeObject(ingredient) + "$";
                 }
             }
-            string insertQuery = "UPDATE homechef_administration.pantry SET ingredients= '" + removeIngredients + "' WHERE pantryid ='" + id + "';";
+            string insertQuery = 
+                "UPDATE homechef_administration.pantry SET ingredients= '" 
+                + removeIngredients + "', lastclearoutdate='" + DateTime.Now+"' WHERE pantryid ='" + id + "';";
             MySqlConnection connection = new MySqlConnection(cs);
             MySqlCommand MySqlCommand = new MySqlCommand(insertQuery, connection);
             MySqlDataReader rdr;
@@ -182,6 +185,169 @@ namespace HomeChefBackend
             {
                 return new IngredientModel[0];
             }
-        }  
+        }
+
+        //STAPLES
+        public bool AddStaples(string id, IngredientModel[] ingredients)
+        {
+            string addIngredients = "";
+            var existingIngredients = GetStaples(id);
+            if (ingredients == null)
+            {
+                return true;
+            }
+            if (existingIngredients == null)
+            {
+                addIngredients = ingredients.ToString();
+            }
+            else
+            {
+                var a = ingredients.Concat(existingIngredients).ToArray().Where(g => g != null).ToArray();
+
+                var c = a.DistinctBy(x => x.id).ToArray();
+                foreach (var b in c)
+                {
+                    addIngredients += JsonConvert.SerializeObject(b) + "$";
+
+                }
+            }
+
+            string insertQuery = "UPDATE homechef_administration.pantry SET staples= '" + addIngredients + "' WHERE pantryid ='" + id + "';";
+            MySqlConnection connection = new MySqlConnection(cs);
+            MySqlCommand MySqlCommand = new MySqlCommand(insertQuery, connection);
+            MySqlDataReader rdr;
+            try
+            {
+                connection.Open();
+                rdr = MySqlCommand.ExecuteReader();
+
+                while (rdr.Read())
+                {
+                }
+
+                connection.Close();
+                return true;
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return false;
+            }
+        }
+        public IngredientModel[] GetStaples(string pantryid)
+        {
+            //TODO: Why does it always return null to begin..
+            try
+            {
+                using (var connection = new MySqlConnection(cs))
+                {
+
+                    connection.Open();
+                    Console.WriteLine("Opening Login Connection To Database");
+                    var mySql = "SELECT * FROM homechef_administration.pantry WHERE pantryid = '" + pantryid + "'";
+                    var cmd = new MySqlCommand(mySql, connection);
+
+                    using (MySqlDataReader rdr = cmd.ExecuteReader())
+                    {
+                        if (rdr.HasRows)
+                        {
+                            rdr.Read();
+                            var value = rdr.GetFieldValue<string?>(3);
+                            var ingredientsString = value.Split("$");
+                            var returnedIngredientsArray = new IngredientModel[ingredientsString.Length];
+                            var indexer = 0;
+                            foreach (var ingredient in ingredientsString)
+                            {
+                                returnedIngredientsArray[indexer] = JsonConvert.DeserializeObject<IngredientModel>(ingredient);
+                                indexer++;
+                            }
+                            return returnedIngredientsArray;
+                        }
+                        return new IngredientModel[0];
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return new IngredientModel[0];
+            }
+        }
+        public bool RemoveStaples(string id, IngredientModel[] ingredients)
+        {
+
+            string removeIngredients = "";
+            var existingIngredients = GetStaples(id).Where(x => x != null).ToArray();
+            if (ingredients == null)
+            {
+                return true;
+            }
+            if (existingIngredients == null)
+            {
+                return true;
+            }
+            else
+            {
+                var ingredientsList = existingIngredients.Where(a => ingredients.All(b => b.id != a.id)).ToArray();
+                foreach (var ingredient in ingredientsList)
+                {
+                    removeIngredients += JsonConvert.SerializeObject(ingredient) + "$";
+                }
+            }
+            string insertQuery = "UPDATE homechef_administration.pantry SET staples= '" + removeIngredients + "' WHERE pantryid ='" + id + "';";
+            MySqlConnection connection = new MySqlConnection(cs);
+            MySqlCommand MySqlCommand = new MySqlCommand(insertQuery, connection);
+            MySqlDataReader rdr;
+            try
+            {
+                connection.Open();
+                rdr = MySqlCommand.ExecuteReader();
+
+                while (rdr.Read())
+                {
+                }
+
+                connection.Close();
+                return true;
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return false;
+            }
+        }
+
+        public DateTime GetClearoutDate(string pantryId)
+        {
+            try
+            {
+                using (var connection = new MySqlConnection(cs))
+                {
+
+                    connection.Open();
+                    Console.WriteLine("Opening Login Connection To Database");
+                    var mySql = "SELECT * FROM homechef_administration.pantry WHERE pantryid = '" + pantryId + "'";
+                    var cmd = new MySqlCommand(mySql, connection);
+
+                    using (MySqlDataReader rdr = cmd.ExecuteReader())
+                    {
+                        if (rdr.HasRows)
+                        {
+                           rdr.Read();
+                           var value = rdr.GetFieldValue<string?>(4);
+                           return  DateTime.Parse(value);                           
+                        }
+                        return new DateTime();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine();
+                return new DateTime();
+            }
+
+        }
     }
 }

@@ -190,5 +190,31 @@ namespace HomeChefBackend
                 return false;
             }
         }
+
+        public bool resetPassword(string email,string password)
+        {
+            string insertQuery = "UPDATE homechef_administration.users SET password= '" + password + "' WHERE email ='" + email + "';";
+            MySqlConnection connection = new MySqlConnection(cs);
+            MySqlCommand MySqlCommand = new MySqlCommand(insertQuery, connection);
+            MySqlDataReader rdr;
+            try
+            {
+                connection.Open();
+                rdr = MySqlCommand.ExecuteReader();
+
+                while (rdr.Read())
+                {
+                }
+
+                connection.Close();
+                return true;
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return false;
+            }
+        }
     }
 }
