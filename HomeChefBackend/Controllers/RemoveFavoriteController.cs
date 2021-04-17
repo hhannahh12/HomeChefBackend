@@ -13,7 +13,7 @@ namespace HomeChefBackend.Controllers
     public class RemoveFavoriteController : ControllerBase
     {
         private readonly ILogger<RemoveFavoriteController> _logger;
-        private readonly FavoritesManagement _favoritesManagement;
+        private readonly FavoritesManagement _favoritesManagement = new FavoritesManagement();
         
         public RemoveFavoriteController(ILogger<RemoveFavoriteController> logger)
         {
@@ -21,9 +21,9 @@ namespace HomeChefBackend.Controllers
         }
 
         [HttpPost]
-        public bool Post([FromBody] AddFavoritesModel favorites)
+        public bool Post([FromBody] FavoriteRecipeModel favorites)
         {
-            return _favoritesManagement.RemoveFavorites(favorites.favoritesId, favorites.recipe);
+            return _favoritesManagement.RemoveFavorites(favorites);
         }
     }
 }

@@ -13,7 +13,7 @@ namespace HomeChefBackend.Controllers
     public class GetFavoritesController : ControllerBase
     {
         private readonly ILogger<GetFavoritesController> _logger;
-        private readonly FavoritesManagement _favoritesManagement;
+        private readonly FavoritesManagement _favoritesManagement = new FavoritesManagement();
         
         public GetFavoritesController(ILogger<GetFavoritesController> logger)
         {
@@ -21,7 +21,7 @@ namespace HomeChefBackend.Controllers
         }
 
         [HttpGet]
-        public RecipeInfoModel[] Get(string favoritesId)
+        public FavoriteRecipeModel[] Get(string favoritesId)
         {
             return _favoritesManagement.GetFavorites(favoritesId);
         }

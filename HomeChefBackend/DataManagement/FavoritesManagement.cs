@@ -15,14 +15,14 @@ namespace HomeChefBackend
     public class FavoritesManagement
     {
         private static string cs = "server=localhost;port=3306;user=sghruddy;password=Thisissostupid123!;database=homechef_administration;";
-        public RecipeInfoModel[] GetFavorites(string favoritesId)
+        public FavoriteRecipeModel[] GetFavorites(string favoritesId)
         {
             try
             {
                 using (var connection = new MySqlConnection(cs))
                 {
                     connection.Open();
-                    var mySql = "SELECT * FROM homechef_administration.favorites WHERE favorites = '" + favoritesId + "'";
+                    var mySql = "SELECT * FROM homechef_administration.favorites WHERE favoritesid = '" + favoritesId + "'";
                     var cmd = new MySqlCommand(mySql, connection);
 
                     using (MySqlDataReader rdr = cmd.ExecuteReader())
@@ -32,42 +32,42 @@ namespace HomeChefBackend
                             rdr.Read();
                             var value = rdr.GetFieldValue<string?>(2);
                             var favoritesString = value.Split("$");
-                            var returnedFavoritesArray = new RecipeInfoModel[favoritesString.Length];
+                            var returnedFavoritesArray = new FavoriteRecipeModel[favoritesString.Length];
                             var indexer = 0;
                             foreach (var favorite in favoritesString)
                             {
-                                returnedFavoritesArray[indexer] = JsonConvert.DeserializeObject<RecipeInfoModel>(favorite);
+                                returnedFavoritesArray[indexer] = JsonConvert.DeserializeObject<FavoriteRecipeModel>(favorite);
                                 indexer++;
                             }
                             return returnedFavoritesArray;
                         }
-                        return new RecipeInfoModel[0];
+                        return new FavoriteRecipeModel[0];
                     }
                 }
             }
             catch (Exception ex)
             {
-                return new RecipeInfoModel[0];
+                return new FavoriteRecipeModel[0];
             }
         }
-        public bool AddFavorite(string id, RecipeInfoModel favorite)
+        public bool AddFavorite(FavoriteRecipeModel favorite)
         {
             string addFavorites = "";
-            var existingFavorites = GetFavorites(id);
+            var existingFavorites = GetFavorites(favorite.favoritesId);
             if (favorite == null)
             {
                 return true;
             }
-            if (existingFavorites == null)
+            if (existingFavorites == null || existingFavorites[0]== null)
             {
-                addFavorites = favorite.ToString();
+                addFavorites = JsonConvert.SerializeObject(favorite);
             }
             else
             {
 
                 existingFavorites[existingFavorites.Length] = favorite;
 
-                var c = existingFavorites.DistinctBy(x => x.id).ToArray();
+                var c = existingFavorites.DistinctBy(x => x.recipeId).ToArray();
                 foreach (var b in c)
                 {
                     addFavorites += JsonConvert.SerializeObject(b) + "$";
@@ -75,7 +75,7 @@ namespace HomeChefBackend
                 }
             }
 
-            string insertQuery = "UPDATE homechef_administration.favorites SET favorites= '" + addFavorites + "' WHERE favoritesid ='" + id + "';";
+            string insertQuery = "UPDATE homechef_administration.favorites SET favorites= '" + addFavorites + "' WHERE favoritesid ='" +favorite.favoritesId + "';";
             MySqlConnection connection = new MySqlConnection(cs);
             MySqlCommand MySqlCommand = new MySqlCommand(insertQuery, connection);
             MySqlDataReader rdr;
@@ -98,11 +98,11 @@ namespace HomeChefBackend
                 return false;
             }
         }
-        public bool RemoveFavorites(string id, RecipeInfoModel favorite)
+        public bool RemoveFavorites(FavoriteRecipeModel favorite)
         {
 
             string removeIngredients = "";
-            var existingFavorites = GetFavorites(id).Where(x => x != null).ToArray();
+            var existingFavorites = GetFavorites(favorite.favoritesId).Where(x => x != null).ToArray();
             if (favorite == null)
             {
                 return true;
@@ -113,13 +113,13 @@ namespace HomeChefBackend
             }
             else
             {
-                var favoritesList = existingFavorites.Where(a => favorite.id != a.id).ToArray();
+                var favoritesList = existingFavorites.Where(a => favorite.recipeId != a.recipeId).ToArray();
                 foreach (var ingredient in favoritesList)
                 {
                     removeIngredients += JsonConvert.SerializeObject(ingredient) + "$";
                 }
             }
-            string insertQuery = "UPDATE homechef_administration.favorites SET favorites= '" + removeIngredients + "' WHERE favoritesid ='" + id + "';";
+            string insertQuery = "UPDATE homechef_administration.favorites SET favorites= '" + removeIngredients + "' WHERE favoritesid ='" + favorite.favoritesId + "';";
             MySqlConnection connection = new MySqlConnection(cs);
             MySqlCommand MySqlCommand = new MySqlCommand(insertQuery, connection);
             MySqlDataReader rdr;
@@ -140,6 +140,64 @@ namespace HomeChefBackend
             {
                 Console.WriteLine(ex);
                 return false;
+            }
+        }
+        public bool AddUserToFavoritesDB(string userid)
+        {
+            var favoritesid = Guid.NewGuid().ToString();
+            //todo: make dietryrequirements lower case.
+            string insertQuery = "insert into homechef_administration.favorites(favoritesid,userid) values('" + favoritesid + "','" + userid + "');";
+            MySqlConnection connection = new MySqlConnection(cs);
+            MySqlCommand MySqlCommand = new MySqlCommand(insertQuery, connection);
+            MySqlDataReader rdr;
+            try
+            {
+                connection.Open();
+                rdr = MySqlCommand.ExecuteReader();
+
+                while (rdr.Read())
+                {
+                }
+
+                connection.Close();
+                return true;
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return false;
+            }
+        }
+
+        public string GetFavoritesId(string userId)
+        {
+            using (var connection = new MySqlConnection(cs))
+            {
+                try
+                {
+                    connection.Open();
+                    Console.WriteLine("Opening Login Connection To Database");
+                    var mySql = "SELECT * FROM homechef_administration.favorites WHERE userid = '" + userId + "'";
+                    var cmd = new MySqlCommand(mySql, connection);
+                    using (MySqlDataReader rdr = cmd.ExecuteReader())
+                    {
+                        if (rdr.HasRows)
+                        {
+                            rdr.Read();
+                            return rdr.GetFieldValue<string>(0);
+                        }
+                        else
+                        {
+                            return "failed";
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                    throw new Exception("Could not retrieve favorites id " + ex);
+                }
             }
         }
     }

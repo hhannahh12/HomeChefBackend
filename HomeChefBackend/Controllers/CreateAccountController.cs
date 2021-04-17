@@ -11,6 +11,7 @@ namespace HomeChefBackend.Controllers
     {
         private readonly ILogger<CreateAccountController> _logger;
         private readonly UserManagement _userManagement = new UserManagement();
+        private readonly FavoritesManagement _favoritesManagement = new FavoritesManagement();
         
         public CreateAccountController(ILogger<CreateAccountController> logger)
         {
@@ -25,6 +26,7 @@ namespace HomeChefBackend.Controllers
             if (result) {
                 _userManagement.AddUserToPreferencesDB(id.ToString());
                 _userManagement.AddUserToPantryDB(id.ToString());
+                _favoritesManagement.AddUserToFavoritesDB(id.ToString());
             }
             return result;
         }

@@ -13,7 +13,7 @@ namespace HomeChefBackend.Controllers
     public class AddFavoriteController : ControllerBase
     {
         private readonly ILogger<AddFavoriteController> _logger;
-        private readonly FavoritesManagement _favoritesManagement;
+        private readonly FavoritesManagement _favoritesManagement = new FavoritesManagement();
         
         public AddFavoriteController(ILogger<AddFavoriteController> logger)
         {
@@ -21,9 +21,9 @@ namespace HomeChefBackend.Controllers
         }
 
         [HttpPost]
-        public bool Post([FromBody] AddFavoritesModel favorites)
+        public bool Post(FavoriteRecipeModel favorites)
         {
-            return _favoritesManagement.AddFavorite(favorites.favoritesId, favorites.recipe);
+            return _favoritesManagement.AddFavorite(favorites);
         }
     }
 }
