@@ -15,6 +15,7 @@ namespace HomeChefBackend
     public class FavoritesManagement
     {
         private static string cs = "server=localhost;port=3306;user=sghruddy;password=Thisissostupid123!;database=homechef_administration;";
+
         public FavoriteRecipeModel[] GetFavorites(string favoritesId)
         {
             try
@@ -39,7 +40,8 @@ namespace HomeChefBackend
                                 returnedFavoritesArray[indexer] = JsonConvert.DeserializeObject<FavoriteRecipeModel>(favorite);
                                 indexer++;
                             }
-                            return returnedFavoritesArray;
+                            return returnedFavoritesArray.Where(a => a != null).ToArray();
+                
                         }
                         return new FavoriteRecipeModel[0];
                     }
@@ -52,6 +54,7 @@ namespace HomeChefBackend
         }
         public bool AddFavorite(FavoriteRecipeModel favorite)
         {
+
             string addFavorites = "";
             var existingFavorites = GetFavorites(favorite.favoritesId);
             if (favorite == null)
@@ -65,9 +68,14 @@ namespace HomeChefBackend
             else
             {
 
-                existingFavorites[existingFavorites.Length] = favorite;
-
-                var c = existingFavorites.DistinctBy(x => x.recipeId).ToArray();
+                existingFavorites[existingFavorites.Length-1] = favorite;
+                var c = existingFavorites;
+                if (existingFavorites.Length > 1)
+                {
+                    c = existingFavorites.DistinctBy(x => x.recipeId).ToArray();
+                    c = c.Where(a => a != null).ToArray();
+                }
+              
                 foreach (var b in c)
                 {
                     addFavorites += JsonConvert.SerializeObject(b) + "$";
