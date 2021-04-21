@@ -21,6 +21,10 @@ namespace HomeChefBackend.Controllers
         public bool Get(string pantryId)
         {
             var lastupdated = _ingredientsManagement.GetClearoutDate(pantryId);
+            if (lastupdated == new DateTime())
+            {
+                return false;
+            }
             //todo: new date time doesnt do now
             var currentDate = DateTime.Now;
             var numberOfDays = (currentDate - lastupdated).TotalDays;
