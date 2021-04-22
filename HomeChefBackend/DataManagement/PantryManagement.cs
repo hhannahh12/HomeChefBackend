@@ -349,5 +349,29 @@ namespace HomeChefBackend
             }
 
         }
+        public bool DeletePantry(string userid)
+        {
+            try
+            {
+                string query = "delete from homechef_administration.pantry where userid='" + userid + "';";
+                MySqlConnection connection = new MySqlConnection(cs);
+                MySqlCommand cmd = new MySqlCommand(query, connection);
+                MySqlDataReader rdr;
+                connection.Open();
+                rdr = cmd.ExecuteReader();
+                while (rdr.Read())
+                {
+                }
+                connection.Close();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return false;
+            }
+
+        }
+    
     }
 }

@@ -11,6 +11,8 @@ namespace HomeChefBackend.Controllers
         private readonly ILogger<DeleteAccountController> _logger;
         private readonly UserManagement _userManagement = new UserManagement();
         private readonly PreferenceManagement _preferencseManagement = new PreferenceManagement();
+        private readonly FavoritesManagement _favoritesManagement = new FavoritesManagement();
+        private readonly PantryManagement _pantryManagement = new PantryManagement();
         
         public DeleteAccountController(ILogger<DeleteAccountController> logger)
         {
@@ -23,7 +25,15 @@ namespace HomeChefBackend.Controllers
             //TODO: DELETE USER FROM OTHER TABLE
             var result = _preferencseManagement.DeletePreferences(userIds.PreferencesId); 
             if(result){
-                _userManagement.DeleteAccount(userIds.UserId);
+                _pantryManagement.DeletePantry(userIds.UserId);
+                if (result)
+                {
+                    result = _favoritesManagement.DeleteFavorites(userIds.UserId);
+                    if (result)
+                    {
+                        _userManagement.DeleteAccount(userIds.UserId);
+                    }
+                }
             }
             return result;
         }

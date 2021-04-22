@@ -61,7 +61,7 @@ namespace HomeChefBackend
             {
                 return true;
             }
-            if (existingFavorites == null || existingFavorites[0]== null)
+            if (existingFavorites.Length == 0 )
             {
                 addFavorites = JsonConvert.SerializeObject(favorite);
             }
@@ -207,6 +207,30 @@ namespace HomeChefBackend
                     throw new Exception("Could not retrieve favorites id " + ex);
                 }
             }
+        }
+
+        public bool DeleteFavorites(string userid)
+        {
+            try
+            {
+                string query = "delete from homechef_administration.favorites where userid='" + userid + "';";
+                MySqlConnection connection = new MySqlConnection(cs);
+                MySqlCommand cmd = new MySqlCommand(query, connection);
+                MySqlDataReader rdr;
+                connection.Open();
+                rdr = cmd.ExecuteReader();
+                while (rdr.Read())
+                {
+                }
+                connection.Close();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return false;
+            }
+
         }
     }
 }
