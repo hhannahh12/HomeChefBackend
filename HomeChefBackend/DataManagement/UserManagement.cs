@@ -106,7 +106,7 @@ namespace HomeChefBackend
             }
         }
 
-        private bool doesAccountExist(string email)
+        public bool doesAccountExist(string email)
         {
             try{
                 string checkExistsQuery = "SELECT * FROM homechef_administration.users WHERE email = '" + email+"'";
@@ -216,5 +216,6 @@ namespace HomeChefBackend
                 return false;
             }
         }
+
     }
 }
