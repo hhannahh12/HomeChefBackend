@@ -22,7 +22,6 @@ namespace HomeChefBackend.Controllers
         {
             var result = _ingredientsManagement.AddIngredients(model.PantryId, model.Ingredients);
             return _ingredientsManagement.GetPantry(model.PantryId);
-            //TODO; Implement some kind of error handling 
         }
     }
 }

@@ -17,7 +17,6 @@ namespace HomeChefBackend.Controllers
         {
             _logger = logger;
         }
-        //TODO:Check all loggers types
         [HttpGet]
         public string Get(string preferencesid)
         {

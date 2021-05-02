@@ -15,7 +15,6 @@ namespace HomeChefBackend
         public static void Main(string[] args)
         {
             CreateHostBuilder(args).Build().Run();
-            //TODO: Put this in to a visual studio secret 
             string cs = @"server=localhost;userid=sghruddy;password=Thisissostupid123!;database=homechef_administration";
 
             using var con = new MySqlConnection(cs);

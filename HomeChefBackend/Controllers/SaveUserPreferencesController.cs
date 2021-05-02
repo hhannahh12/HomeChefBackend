@@ -23,10 +23,7 @@ namespace HomeChefBackend.Controllers
         [HttpPost]
         public bool Post([FromBody] UserPreferencesModel model)
         {
-            //todo: put all these in to an object instead.
-            //todo: should be adding this by preferences id
             return _preferenceManagement.SavePreferences(model);
-
         }
     }
 }

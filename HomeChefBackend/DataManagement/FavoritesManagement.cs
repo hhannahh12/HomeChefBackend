@@ -52,6 +52,47 @@ namespace HomeChefBackend
                 return new FavoriteRecipeModel[0];
             }
         }
+        public FavoriteRecipeModel GetFavoriteById(string favoritesId,string recipeId)
+        {
+            try
+            {
+                using (var connection = new MySqlConnection(cs))
+                {
+                    connection.Open();
+                    var mySql = "SELECT * FROM homechef_administration.favorites WHERE favoritesid = '" + favoritesId + "'";
+                    var cmd = new MySqlCommand(mySql, connection);
+
+                    using (MySqlDataReader rdr = cmd.ExecuteReader())
+                    {
+                        if (rdr.HasRows)
+                        {
+                            rdr.Read();
+                            var value = rdr.GetFieldValue<string?>(2);
+                            var favoritesString = value.Split("$");
+                            var returnedFavoritesArray = new FavoriteRecipeModel[favoritesString.Length];
+                            var indexer = 0;
+                            foreach (var favorite in favoritesString)
+                            {
+                                returnedFavoritesArray[indexer] = JsonConvert.DeserializeObject<FavoriteRecipeModel>(favorite);
+                                indexer++;
+                            }
+                            foreach(var returnedFavorite in returnedFavoritesArray)
+                            {
+                                if(returnedFavorite.recipeId == recipeId)
+                                {
+                                    return returnedFavorite;
+                                }
+                            }
+                        }
+                        return new FavoriteRecipeModel();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return new FavoriteRecipeModel();
+            }
+        }
         public bool AddFavorite(FavoriteRecipeModel favorite)
         {
 
@@ -67,18 +108,16 @@ namespace HomeChefBackend
             }
             else
             {
-
-                existingFavorites[existingFavorites.Length-1] = favorite;
-                var c = existingFavorites;
-                if (existingFavorites.Length > 1)
+                var favoriteCombined = existingFavorites.Concat(favorite).ToArray();
+                if (favoriteCombined.Length > 1)
                 {
-                    c = existingFavorites.DistinctBy(x => x.recipeId).ToArray();
-                    c = c.Where(a => a != null).ToArray();
+                    favoriteCombined = favoriteCombined.DistinctBy(x => x.recipeId).ToArray();
+                    favoriteCombined = favoriteCombined.Where(a => a != null).ToArray();
                 }
               
-                foreach (var b in c)
+                foreach (var fav in favoriteCombined)
                 {
-                    addFavorites += JsonConvert.SerializeObject(b) + "$";
+                    addFavorites += JsonConvert.SerializeObject(fav) + "$";
 
                 }
             }
@@ -153,7 +192,6 @@ namespace HomeChefBackend
         public bool AddUserToFavoritesDB(string userid)
         {
             var favoritesid = Guid.NewGuid().ToString();
-            //todo: make dietryrequirements lower case.
             string insertQuery = "insert into homechef_administration.favorites(favoritesid,userid) values('" + favoritesid + "','" + userid + "');";
             MySqlConnection connection = new MySqlConnection(cs);
             MySqlCommand MySqlCommand = new MySqlCommand(insertQuery, connection);

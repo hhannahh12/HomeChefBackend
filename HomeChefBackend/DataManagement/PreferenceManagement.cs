@@ -14,8 +14,6 @@ namespace HomeChefBackend
 
         public bool SavePreferences(UserPreferencesModel model)
         {
-            var a = int.Parse(model.Portion);
-            //todo: make dietryrequirements lower case.
             string insertQuery = "UPDATE homechef_administration.preferences SET dietryrequirements= '"
                     +model.DietryRequirements+"', intollerances='"+model.Intollerances+"',measuringunit='"+model.MeasuringUnit+"',portion='"+int.Parse(model.Portion)+
                     "' WHERE preferencesid ='"+model.PreferencesId+"';";
@@ -93,7 +91,7 @@ namespace HomeChefBackend
                 {
                     Console.WriteLine(ex.ToString());
                     throw new Exception("Could not retrieve preferences " + ex);
-                    //TODO: Get rid of all these try catches.
+
                 }
             }
 

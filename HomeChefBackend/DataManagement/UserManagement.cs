@@ -43,14 +43,12 @@ namespace HomeChefBackend
                 {
                     Console.WriteLine(ex.ToString());
                     return "Failed";
-                    //TODO: Get rid of all these try catches.
                 }
             }
         }
 
         public bool CreateAccount(string id, string email, string password)
         {
-            //TODO: ADD user to the user settings table too
             if (!doesAccountExist(email))
             {
                 string insertQuery = "insert into homechef_administration.users(userid,email,password) values('" + id + "','"+ email + "','" + password + "');";
@@ -138,7 +136,6 @@ namespace HomeChefBackend
         public bool AddUserToPreferencesDB(string userid)
         {
             var preferencesid = Guid.NewGuid().ToString();
-            //todo: make dietryrequirements lower case.
             string insertQuery = "insert into homechef_administration.preferences(preferencesid,userid) values('" + preferencesid + "','" + userid + "');";
             MySqlConnection connection = new MySqlConnection(cs);
             MySqlCommand MySqlCommand = new MySqlCommand(insertQuery, connection);
@@ -166,7 +163,6 @@ namespace HomeChefBackend
         public bool AddUserToPantryDB(string userid)
         {
             var pantryid = Guid.NewGuid().ToString();
-            //todo: make dietryrequirements lower case.
             string insertQuery = "insert into homechef_administration.pantry(pantryid,userid) values('" + pantryid + "','" + userid + "');";
             MySqlConnection connection = new MySqlConnection(cs);
             MySqlCommand MySqlCommand = new MySqlCommand(insertQuery, connection);

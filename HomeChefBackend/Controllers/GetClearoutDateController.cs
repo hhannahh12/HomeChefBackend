@@ -25,7 +25,6 @@ namespace HomeChefBackend.Controllers
             {
                 return false;
             }
-            //todo: new date time doesnt do now
             var currentDate = DateTime.Now;
             var numberOfDays = (currentDate - lastupdated).TotalDays;
             if(numberOfDays > 14)

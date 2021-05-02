@@ -46,12 +46,6 @@ namespace HomeChefBackend
             }
         }
 
-        public  bool SaveIngredients(string query)
-        {
-            return true;
-            //TODO: REDUNDANT METHOD
-        
-        }
         public bool AddIngredients(string id, IngredientModel[] ingredients)
         {
             string addIngredients = "";
@@ -66,16 +60,15 @@ namespace HomeChefBackend
             }
             else
             {
-                var a = ingredients.Concat(existingIngredients).ToArray().Where(g =>g!= null).ToArray();
+                var ingredientsJoined = ingredients.Concat(existingIngredients).ToArray().Where(g =>g!= null).ToArray();
      
-                var c = a.DistinctBy(x=>x.id).ToArray();
-                foreach(var b in c)
+                var distinctIngredients = ingredientsJoined.DistinctBy(x=>x.id).ToArray();
+                foreach(var ing in distinctIngredients)
                 {
-                    addIngredients += JsonConvert.SerializeObject(b) + "$";
+                    addIngredients += JsonConvert.SerializeObject(ing) + "$";
 
                 }
             }
-            //TODO:TEST THIS WORKS 
             string insertQuery = "UPDATE homechef_administration.pantry SET ingredients= '" + addIngredients 
                 + "', lastclearoutdate= '"+DateTime.Now+"' WHERE pantryid ='" + id + "';";
             MySqlConnection connection = new MySqlConnection(cs); 
@@ -86,7 +79,7 @@ namespace HomeChefBackend
                 connection.Open();
                 rdr = MySqlCommand.ExecuteReader();
 
-                while (rdr.Read()) ;
+                while (rdr.Read())
                 {
                 }
 
@@ -150,7 +143,6 @@ namespace HomeChefBackend
 
         public IngredientModel[] GetPantry(string pantryid)
         {
-            //TODO: Why does it always return null to begin..
             try
             {
                 using (var connection = new MySqlConnection(cs))
@@ -202,12 +194,12 @@ namespace HomeChefBackend
             }
             else
             {
-                var a = ingredients.Concat(existingIngredients).ToArray().Where(g => g != null).ToArray();
+                var joinedIngredients = ingredients.Concat(existingIngredients).ToArray().Where(g => g != null).ToArray();
 
-                var c = a.DistinctBy(x => x.id).ToArray();
-                foreach (var b in c)
+                var distinctIngredients = joinedIngredients.DistinctBy(x => x.id).ToArray();
+                foreach (var ing in distinctIngredients)
                 {
-                    addIngredients += JsonConvert.SerializeObject(b) + "$";
+                    addIngredients += JsonConvert.SerializeObject(ing) + "$";
 
                 }
             }
@@ -237,7 +229,6 @@ namespace HomeChefBackend
         }
         public IngredientModel[] GetStaples(string pantryid)
         {
-            //TODO: Why does it always return null to begin..
             try
             {
                 using (var connection = new MySqlConnection(cs))

@@ -22,7 +22,6 @@ namespace HomeChefBackend.Controllers
         [HttpPost]
         public bool Post([FromBody] UserIdsModel userIds)
         {
-            //TODO: DELETE USER FROM OTHER TABLE
             var result = _preferencseManagement.DeletePreferences(userIds.PreferencesId); 
             if(result){
                 _pantryManagement.DeletePantry(userIds.UserId);
